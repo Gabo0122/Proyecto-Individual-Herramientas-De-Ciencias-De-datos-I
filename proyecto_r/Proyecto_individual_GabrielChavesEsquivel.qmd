@@ -1,0 +1,35 @@
+---
+title: "Proyecto Individual"
+author: "Gabriel Chaves"
+format: html
+editor: visual
+---
+
+# Análisis comparativo de la educación nivel colegio décimo-undécimo en Costa Rica desde el 2018 hasta el 2021
+
+## Descarga de paquetes
+```{r}
+library(readxl)
+```
+
+## Primer vistazo de los datos en formato excel
+```{r}
+aprobados_aplazados_reprobados_2014_2022 <- read_xlsx("C:/Herramientas-De-Ciencias-De-Datos-GabrielChaves/Proyecto_individual/Datos_sucios_excel/AprobadosAplazadosReprobados14-22.xlsx",sheet = 1, .name_repair = "universal", skip = 2)
+View(aprobados_aplazados_reprobados_2014_2022)
+
+exclusion_intraanual_2014_2022 <- read_xlsx("C:/Herramientas-De-Ciencias-De-Datos-GabrielChaves/Proyecto_individual/Datos_sucios_excel/exclusionintraanualcolegios-2014-2022.xlsx", sheet = 1, .name_repair = "universal", skip = 2)
+View(exclusion_intraanual_2014_2022)
+
+extranjeros_2014_2022 <- read_xlsx("C:/Herramientas-De-Ciencias-De-Datos-GabrielChaves/Proyecto_individual/Datos_sucios_excel/extranjeroscolegios-2014-2022.xlsx", sheet = 1, .name_repair = "universal", skip = 2)
+View(extranjeros_2014_2022)
+
+matricula_inicial_2014_2022 <- read_xlsx("C:/Herramientas-De-Ciencias-De-Datos-GabrielChaves/Proyecto_individual/Datos_sucios_excel/MATRICULA_INICIAL_COLEGIOS_2014-2022_POR_ANIO_CURSADO_Y_SEXO.xlsx", sheet = 1, .name_repair = "universal", skip = 2)
+View(matricula_inicial_2014_2022)
+
+rendimiento_definitivo_2014_2021 <- read_xlsx("C:/Herramientas-De-Ciencias-De-Datos-GabrielChaves/Proyecto_individual/Datos_sucios_excel/rendimientodefinitivocolegios-2014-2021.xlsx", sheet = 1, .name_repair = "universal", skip = 2)
+View(rendimiento_definitivo_2014_2021)
+
+repitentes_2014_2022 <- read_xlsx("C:/Herramientas-De-Ciencias-De-Datos-GabrielChaves/Proyecto_individual/Datos_sucios_excel/repitentescolegios-2014-2022.xlsx", sheet = 1, .name_repair = "universal", skip = 2)
+View(repitentes_2014_2022)
+```
+
