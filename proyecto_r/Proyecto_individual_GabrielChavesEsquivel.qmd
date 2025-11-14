@@ -5,11 +5,12 @@ format: html
 editor: visual
 ---
 
-# Análisis comparativo de la educación nivel colegio décimo-undécimo en Costa Rica desde el 2018 hasta el 2021
+# Análisis comparativo de la educación nivel colegio diversificada en Costa Rica desde el 2018 hasta el 2021
 
 ## Descarga de paquetes
 ```{r}
 library(readxl)
+library(tidyverse)
 ```
 
 ## Primer vistazo de los datos en formato excel
@@ -20,9 +21,6 @@ View(aprobados_aplazados_reprobados_2014_2022)
 exclusion_intraanual_2014_2022 <- read_xlsx("C:/Herramientas-De-Ciencias-De-Datos-GabrielChaves/Proyecto_individual/Datos_sucios_excel/exclusionintraanualcolegios-2014-2022.xlsx", sheet = 1, .name_repair = "universal", skip = 2)
 View(exclusion_intraanual_2014_2022)
 
-extranjeros_2014_2022 <- read_xlsx("C:/Herramientas-De-Ciencias-De-Datos-GabrielChaves/Proyecto_individual/Datos_sucios_excel/extranjeroscolegios-2014-2022.xlsx", sheet = 1, .name_repair = "universal", skip = 2)
-View(extranjeros_2014_2022)
-
 matricula_inicial_2014_2022 <- read_xlsx("C:/Herramientas-De-Ciencias-De-Datos-GabrielChaves/Proyecto_individual/Datos_sucios_excel/MATRICULA_INICIAL_COLEGIOS_2014-2022_POR_ANIO_CURSADO_Y_SEXO.xlsx", sheet = 1, .name_repair = "universal", skip = 2)
 View(matricula_inicial_2014_2022)
 
@@ -31,5 +29,129 @@ View(rendimiento_definitivo_2014_2021)
 
 repitentes_2014_2022 <- read_xlsx("C:/Herramientas-De-Ciencias-De-Datos-GabrielChaves/Proyecto_individual/Datos_sucios_excel/repitentescolegios-2014-2022.xlsx", sheet = 1, .name_repair = "universal", skip = 2)
 View(repitentes_2014_2022)
+```
+
+## Limpieza de datos
+
+### Filtrado en el periodo 2018-2021 y selección de columnas
+
+```{r}
+aprobados_aplazados_reprobados_2018_2021 <- aprobados_aplazados_reprobados_2014_2022 %>%
+  filter(CURSO.LECTIVO >=2018, CURSO.LECTIVO <= 2021) %>%
+  select(
+    CURSO.LECTIVO, 
+    CODIGO,
+    NOMBRE,
+    REGION,
+    PR,
+    CAN,
+    PROVINCIA,
+    CANTON,
+    SECTOR,
+    ZONA,
+    RAMA,
+    MF4T, 
+    MF5T,
+    MF6T,
+    AP4T,
+    AP5T,
+    AP6T,
+    AZ4T,
+    AZ5T,
+    AZ6T,
+    RE4T,
+    RE5T,
+    RE6T
+    )
+View(aprobados_aplazados_reprobados_2018_2021)
+
+matricula_inicial_2018_2021 <- matricula_inicial_2014_2022 %>%
+  filter(CURSO.LECTIVO >= 2018, CURSO.LECTIVO <= 2021) %>%
+  select(
+    CURSO.LECTIVO, 
+    CODIGO,
+    NOMBRE,
+    REGION,
+    PR,
+    CAN,
+    PROVINCIA,
+    CANTON,
+    SECTOR,
+    ZONA,
+    RAMA,
+    T10,
+    T11,
+    T12
+  )
+View(matricula_inicial_2018_2021)
+
+rendimiento_definitivo_2018_2021 <- rendimiento_definitivo_2014_2021 %>%
+  filter(CURSO.LECTIVO >= 2018, CURSO.LECTIVO <= 2021) %>%
+  select(
+    CURSO.LECTIVO, 
+    CODIGO,
+    NOMBRE,
+    REGION,
+    PR,
+    CAN,
+    PROVINCIA,
+    CANTON,
+    SECTOR,
+    ZONA,
+    RAMA,
+    MF4T, 
+    MF5T,
+    MF6T,
+    APROBT4,
+    APROBT5,
+    APROBT6,
+    REPROT4,
+    REPROT5,
+    REPROT6
+  )
+View(rendimiento_definitivo_2018_2021)
+
+repitentes_2018_2021 <- repitentes_2014_2022 %>%
+  filter(CURSO.LECTIVO >= 2018, CURSO.LECTIVO <= 2021) %>%
+  select(
+    CURSO.LECTIVO, 
+    CODIGO,
+    NOMBRE,
+    REGION,
+    PR,
+    CAN,
+    PROVINCIA,
+    CANTON,
+    SECTOR,
+    ZONA,
+    RAMA,
+    RT10,
+    RT11,
+    RT12
+  )
+View(repitentes_2018_2021)
+
+exclusion_intraanual_2018_2021 <- exclusion_intraanual_2014_2022 %>%
+  filter(CURSO.LECTIVO >= 2018, CURSO.LECTIVO <= 2021) %>%
+  select(
+    CURSO.LECTIVO, 
+    CODIGO,
+    NOMBRE,
+    REGION,
+    PR,
+    CAN,
+    PROVINCIA,
+    CANTON,
+    SECTOR,
+    ZONA,
+    RAMA,
+    EXC4T,
+    EXC5T,
+    EXC6T,
+    EXC.INTRAT4,
+    EXC.INTRAT5,
+    EXC.INTRAT6
+  )
+View(exclusion_intraanual_2018_2021)
 ```
 
