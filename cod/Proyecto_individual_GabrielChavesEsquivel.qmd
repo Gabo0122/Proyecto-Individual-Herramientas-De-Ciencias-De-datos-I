@@ -1,34 +1,53 @@
 ---
 title: "Proyecto Individual"
 author: "Gabriel Chaves"
-format: html
-editor: visual
+output:
+  html_document:
+    toc: true        
+    toc_float: true 
+    theme: cosmo    
+    highlight: tango 
+    number_sections: true
+    df_print: paged 
 ---
 
 # Análisis comparativo de la educación nivel colegio diversificada en Costa Rica desde el 2018 hasta el 2021
 
 ## Descarga de paquetes
+
 ```{r}
 library(readxl)
 library(tidyverse)
 ```
 
 ## Primer vistazo de los datos en formato excel
+
+### Carga de los excel
+
 ```{r}
-aprobados_aplazados_reprobados_2014_2022 <- read_xlsx("C:/Herramientas-De-Ciencias-De-Datos-GabrielChaves/Proyecto_individual/Datos_sucios_excel/AprobadosAplazadosReprobados14-22.xlsx",sheet = 1, .name_repair = "universal", skip = 2)
+aprobados_aplazados_reprobados_2014_2022 <- read_xlsx("C:/Herramientas-De-Ciencias-De-Datos-GabrielChaves/Proyecto_individual/data/AprobadosAplazadosReprobados14-22.xlsx",sheet = 1, .name_repair = "universal", skip = 2)
+
+exclusion_intraanual_2014_2022 <- read_xlsx("C:/Herramientas-De-Ciencias-De-Datos-GabrielChaves/Proyecto_individual/data/exclusionintraanualcolegios-2014-2022.xlsx", sheet = 1, .name_repair = "universal", skip = 2)
+
+matricula_inicial_2014_2022 <- read_xlsx("C:/Herramientas-De-Ciencias-De-Datos-GabrielChaves/Proyecto_individual/data/MATRICULA_INICIAL_COLEGIOS_2014-2022_POR_ANIO_CURSADO_Y_SEXO.xlsx", sheet = 1, .name_repair = "universal", skip = 2)
+
+rendimiento_definitivo_2014_2021 <- read_xlsx("C:/Herramientas-De-Ciencias-De-Datos-GabrielChaves/Proyecto_individual/data/rendimientodefinitivocolegios-2014-2021.xlsx", sheet = 1, .name_repair = "universal", skip = 2)
+
+```
+
+### Vistazo de los datos
+
+```{r}
 View(aprobados_aplazados_reprobados_2014_2022)
-
-exclusion_intraanual_2014_2022 <- read_xlsx("C:/Herramientas-De-Ciencias-De-Datos-GabrielChaves/Proyecto_individual/Datos_sucios_excel/exclusionintraanualcolegios-2014-2022.xlsx", sheet = 1, .name_repair = "universal", skip = 2)
 View(exclusion_intraanual_2014_2022)
-
-matricula_inicial_2014_2022 <- read_xlsx("C:/Herramientas-De-Ciencias-De-Datos-GabrielChaves/Proyecto_individual/Datos_sucios_excel/MATRICULA_INICIAL_COLEGIOS_2014-2022_POR_ANIO_CURSADO_Y_SEXO.xlsx", sheet = 1, .name_repair = "universal", skip = 2)
 View(matricula_inicial_2014_2022)
-
-rendimiento_definitivo_2014_2021 <- read_xlsx("C:/Herramientas-De-Ciencias-De-Datos-GabrielChaves/Proyecto_individual/Datos_sucios_excel/rendimientodefinitivocolegios-2014-2021.xlsx", sheet = 1, .name_repair = "universal", skip = 2)
 View(rendimiento_definitivo_2014_2021)
 
-repitentes_2014_2022 <- read_xlsx("C:/Herramientas-De-Ciencias-De-Datos-GabrielChaves/Proyecto_individual/Datos_sucios_excel/repitentescolegios-2014-2022.xlsx", sheet = 1, .name_repair = "universal", skip = 2)
-View(repitentes_2014_2022)
+head(aprobados_aplazados_reprobados_2014_2022, 10)
+head(exclusion_intraanual_2014_2022,10)
+head(matricula_inicial_2014_2022,10)
+head(rendimiento_definitivo_2014_2021,10)
+
 ```
 
 ## Limpieza de datos
@@ -52,16 +71,12 @@ aprobados_aplazados_reprobados_2018_2021 <- aprobados_aplazados_reprobados_2014_
     RAMA,
     MF4T, 
     MF5T,
-    MF6T,
     AP4T,
     AP5T,
-    AP6T,
     AZ4T,
     AZ5T,
-    AZ6T,
     RE4T,
-    RE5T,
-    RE6T
+    RE5T
     )
 View(aprobados_aplazados_reprobados_2018_2021)
 
@@ -80,8 +95,7 @@ matricula_inicial_2018_2021 <- matricula_inicial_2014_2022 %>%
     ZONA,
     RAMA,
     T10,
-    T11,
-    T12
+    T11
   )
 View(matricula_inicial_2018_2021)
 
@@ -101,35 +115,12 @@ rendimiento_definitivo_2018_2021 <- rendimiento_definitivo_2014_2021 %>%
     RAMA,
     MF4T, 
     MF5T,
-    MF6T,
     APROBT4,
     APROBT5,
-    APROBT6,
     REPROT4,
-    REPROT5,
-    REPROT6
+    REPROT5
   )
 View(rendimiento_definitivo_2018_2021)
-
-repitentes_2018_2021 <- repitentes_2014_2022 %>%
-  filter(CURSO.LECTIVO >= 2018, CURSO.LECTIVO <= 2021) %>%
-  select(
-    CURSO.LECTIVO, 
-    CODIGO,
-    NOMBRE,
-    REGION,
-    PR,
-    CAN,
-    PROVINCIA,
-    CANTON,
-    SECTOR,
-    ZONA,
-    RAMA,
-    RT10,
-    RT11,
-    RT12
-  )
-View(repitentes_2018_2021)
 
 exclusion_intraanual_2018_2021 <- exclusion_intraanual_2014_2022 %>%
   filter(CURSO.LECTIVO >= 2018, CURSO.LECTIVO <= 2021) %>%
@@ -147,11 +138,411 @@ exclusion_intraanual_2018_2021 <- exclusion_intraanual_2014_2022 %>%
     RAMA,
     EXC4T,
     EXC5T,
-    EXC6T,
     EXC.INTRAT4,
-    EXC.INTRAT5,
-    EXC.INTRAT6
+    EXC.INTRAT5
   )
 View(exclusion_intraanual_2018_2021)
 ```
 
+### Manejo de NA's y colegios que posean educación diversificada
+
+```{r}
+sum(is.na(aprobados_aplazados_reprobados_2018_2021))
+sum(is.na(matricula_inicial_2018_2021))
+sum(is.na(rendimiento_definitivo_2018_2021))
+sum(is.na(exclusion_intraanual_2018_2021))
+
+colSums(is.na(aprobados_aplazados_reprobados_2018_2021))
+aprobados_aplazados_reprobados_2018_2021 %>% 
+  filter(is.na(MF4T)) 
+
+colSums(is.na(rendimiento_definitivo_2018_2021))
+rendimiento_definitivo_2018_2021 %>% 
+  filter(is.na(MF4T)) 
+
+colSums(is.na(exclusion_intraanual_2018_2021))
+exclusion_intraanual_2018_2021 %>% 
+  filter(is.na(RAMA)) 
+
+aprobados_aplazados_reprobados_2018_2021 <- aprobados_aplazados_reprobados_2018_2021 %>%
+  filter(MF4T >0, MF5T > 0)
+
+rendimiento_definitivo_2018_2021 <- rendimiento_definitivo_2018_2021 %>%
+  filter(MF4T >0, MF5T > 0)
+
+matricula_inicial_2018_2021 <- matricula_inicial_2018_2021 %>%
+  filter(T10 > 0, T11 > 0)
+
+exclusion_intraanual_2018_2021 <- exclusion_intraanual_2018_2021 %>%
+  filter(!is.na(RAMA))
+
+sum(is.na(aprobados_aplazados_reprobados_2018_2021))
+sum(is.na(rendimiento_definitivo_2018_2021))
+sum(is.na(matricula_inicial_2018_2021))
+sum(is.na(exclusion_intraanual_2018_2021))
+```
+
+### Manejo de outliers
+
+```{r}
+aprobados_aplazados_reprobados_2018_2021 <- aprobados_aplazados_reprobados_2018_2021 %>% mutate(
+  tasa_aprob4T = AP4T / MF4T,
+  tasa_aprob5T = AP5T / MF5T,
+  tasa_reprob4T = RE4T / MF4T,
+  tasa_reprob5T = RE5T / MF5T,
+  tasa_aplaz4T = AZ4T / MF4T,
+  tasa_aplaz5T = AZ5T / MF5T,
+  APT = AP4T + AP5T,
+  AZT = AZ4T + AZ5T,
+  RET = RE4T + RE5T,
+  MFT = MF4T + MF5T,
+  tasa_aprobT = APT / MFT,
+  tasa_aplazT = AZT / MFT,
+  tasa_reprobT = RET / MFT
+)
+
+errores_apro_aplaz_repro_2018_2021 <- aprobados_aplazados_reprobados_2018_2021 %>%
+  filter(
+
+    # Tasas sin sentido (mayores a 1 o menores a 0)
+    tasa_aprob4T > 1 | tasa_reprob4T > 1 | tasa_aplaz4T > 1 |
+    tasa_aprob4T < 0 | tasa_reprob4T < 0 | tasa_aplaz4T < 0 |
+
+    tasa_aprob5T > 1 | tasa_reprob5T > 1 | tasa_aplaz5T > 1 |
+    tasa_aprob5T < 0 | tasa_reprob5T < 0 | tasa_aplaz5T < 0 |
+
+    # Matricula menor que la suma de los datos
+    (AP4T + RE4T + AZ4T) > MF4T |
+    (AP5T + RE5T + AZ5T) > MF5T 
+  )
+
+rendimiento_definitivo_2018_2021 <- rendimiento_definitivo_2018_2021 %>% 
+  mutate(
+  tasa_aprob4T = APROBT4 / MF4T,
+  tasa_aprob5T = APROBT5 / MF5T,
+  tasa_reprob4T = REPROT4 / MF4T,
+  tasa_reprob5T = REPROT5 / MF5T,
+  
+  MFT = MF4T + MF5T,
+  APT = APROBT4 + APROBT5,
+  RET = REPROT4 + REPROT5,
+  tasa_aprobT = APT / MFT,
+  tasa_reprobT = RET / MFT
+)
+
+errores_rendimiento_definitivo_2018_2021 <- rendimiento_definitivo_2018_2021 %>%
+  filter(
+
+    # Tasas sin sentido (mayores a 1 o menores a 0)
+    tasa_aprob4T > 1 | tasa_reprob4T > 1 |
+    tasa_aprob4T < 0 | tasa_reprob4T < 0 |
+
+    tasa_aprob5T > 1 | tasa_reprob5T > 1 | 
+    tasa_aprob5T < 0 | tasa_reprob5T < 0 | 
+
+    # Matricula menor que la suma de los datos
+    (APROBT4 + REPROT4 ) > MF4T |
+    (APROBT5 + REPROT5 ) > MF5T 
+  )
+
+head(errores_apro_aplaz_repro_2018_2021)
+head(errores_rendimiento_definitivo_2018_2021)
+
+matricula_inicial_2018_2021 <- matricula_inicial_2018_2021 %>%
+  mutate(
+    MT = T10 + T11
+  )
+
+exclusion_intraanual_2018_2021 <- exclusion_intraanual_2018_2021 %>%
+  mutate(
+    EXCT = EXC4T + EXC5T,
+    EXC.INTRAT = EXC.INTRAT4 + EXC.INTRAT5
+  )
+```
+
+Podemos ver que no hay valores erroneos y no se debe de realizar tratado de outliers ya que son datos de estudiantes, por lo que sus variaciones se vana deber a los tamanios de las instituciones y demás factores que no podemos dejar pasar.
+
+## Analisis de los datos
+
+### Tabla de aprobados,aplazados y reprobados previo a convocatorias
+
+#### Datos generales
+
+```{r}
+summary(aprobados_aplazados_reprobados_2018_2021)
+```
+
+#### Tendencia anual
+
+```{r}
+aprobados_aplazados_reprobados_2018_2021 %>%
+  group_by(CURSO.LECTIVO) %>%
+  summarise(
+    tasa_aprobados = mean(tasa_aprobT, na.rm = TRUE),
+    tasa_aplazados = mean(tasa_aplazT, na.rm = TRUE),
+    tasa_reprobados = mean(tasa_reprobT, na.rm = TRUE),
+  ) %>%
+  pivot_longer(-CURSO.LECTIVO) %>%
+  ggplot(aes(CURSO.LECTIVO, value, color = name)) +
+  geom_line() + geom_point()
+
+```
+
+Se observa que no aparece los reprobados de cuarto y que los reprobados de quinto año se mantienen en 0, pues al ser previo a convocatoria la mayoría de estudiantes son aplazados. Esto se verá al analizar la tabla posterior a la convocatoria.
+
+#### Comparación por provincia
+
+```{r}
+ggplot(aprobados_aplazados_reprobados_2018_2021, aes(x = PR, y = tasa_aprobT, fill = as.factor(CURSO.LECTIVO))) +
+  geom_boxplot() +
+  labs(
+    title = "Tasa de aprobación por provincia y año",
+    x = "Provincia",
+    y = "Tasa de aprobación",
+    fill = "Año"
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(aprobados_aplazados_reprobados_2018_2021, aes(x = PR, y = tasa_reprobT, fill = as.factor(CURSO.LECTIVO))) +
+  geom_boxplot() +
+  labs(
+    title = "Tasa de reprobación por provincia y año",
+    x = "Provincia",
+    y = "Tasa de reprobación",
+    fill = "Año"
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(aprobados_aplazados_reprobados_2018_2021, aes(x = PR, y = tasa_aplazT, fill = as.factor(CURSO.LECTIVO))) +
+  geom_boxplot() +
+  labs(
+    title = "Tasa de aplazamiento por provincia y año",
+    x = "Provincia",
+    y = "Tasa de aplazamiento",
+    fill = "Año"
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+#### Colegios extremos
+
+```{r}
+# de menor a mayor
+aprobados_aplazados_reprobados_2018_2021 %>% 
+  arrange(tasa_aprobT) %>% 
+  select(CURSO.LECTIVO, NOMBRE,PROVINCIA, APT, AZT, RET, tasa_aprobT, tasa_aplazT,   tasa_reprobT) %>%
+  head(10)
+
+# de mayor a menor
+aprobados_aplazados_reprobados_2018_2021 %>% 
+  arrange(desc(tasa_aprobT)) %>% 
+  select(CURSO.LECTIVO, NOMBRE,PROVINCIA, APT, AZT, RET, tasa_aprobT, tasa_aplazT,   tasa_reprobT) %>%
+  head(10)
+
+```
+
+### Tabla de rendimiento definitivo
+
+#### Datos generales
+
+```{r}
+summary(rendimiento_definitivo_2018_2021)
+```
+
+#### Tendencia anual
+
+```{r}
+rendimiento_definitivo_2018_2021 %>%
+  group_by(CURSO.LECTIVO) %>%
+  summarise(
+    tasa_aprobados = mean(tasa_aprobT, na.rm = TRUE),
+    tasa_reprobados = mean(tasa_reprobT, na.rm = TRUE),
+  ) %>%
+  pivot_longer(-CURSO.LECTIVO) %>%
+  ggplot(aes(CURSO.LECTIVO, value, color = name)) +
+  geom_line() + geom_point()
+```
+
+#### Comparación por provincia
+
+```{r}
+ggplot(rendimiento_definitivo_2018_2021, aes(x = PR, y = tasa_aprobT, fill = as.factor(CURSO.LECTIVO))) +
+  geom_boxplot() +
+  labs(
+    title = "Tasa de aprobación por región y año",
+    x = "Provincia",
+    y = "Tasa de aprobación",
+    fill = "Año"
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+#### Colegios extremos
+
+```{r}
+# de menor a mayor
+rendimiento_definitivo_2018_2021 %>% 
+  arrange(tasa_aprobT) %>% 
+  select(CURSO.LECTIVO, NOMBRE,PROVINCIA, APT, RET, tasa_aprobT, tasa_reprobT) %>%
+  head(10)
+
+# de mayor a menor
+rendimiento_definitivo_2018_2021 %>% 
+  arrange(desc(tasa_aprobT)) %>% 
+  select(CURSO.LECTIVO, NOMBRE,PROVINCIA, APT, RET, tasa_aprobT, tasa_reprobT) %>%
+  head(10)
+```
+
+### Tabla de matricula inicial
+
+#### Datos generales
+
+```{r}
+summary(matricula_inicial_2018_2021)
+```
+
+#### tendencia de matricula anual
+
+```{r}
+matricula_inicial_2018_2021 %>%
+  group_by(CURSO.LECTIVO) %>%
+  summarise(
+    Matriculados_T10 = mean(T10, na.rm = TRUE),
+    Matriculados_T11 = mean(T11, na.rm = TRUE),
+  ) %>%
+  pivot_longer(-CURSO.LECTIVO) %>%
+  ggplot(aes(CURSO.LECTIVO, value, color = name)) +
+  geom_line() + geom_point()
+```
+
+#### Matricula por provincia
+
+```{r}
+matricula_inicial_2018_2021 %>%
+  group_by(PROVINCIA) %>%
+  summarise(matricula_media = mean(MT, na.rm = TRUE)) %>%
+  arrange(desc(matricula_media))
+
+```
+
+#### Colegios con más y menos matriculados
+
+```{r}
+# de menor a mayor
+matricula_inicial_2018_2021 %>% 
+  arrange(MT) %>% 
+  select(CURSO.LECTIVO, NOMBRE,PROVINCIA, T10, T11, MT) %>%
+  head(10)
+
+# de mayor a menor
+matricula_inicial_2018_2021 %>% 
+  arrange(desc(MT)) %>% 
+  select(CURSO.LECTIVO, NOMBRE,PROVINCIA, T10, T11, MT) %>%
+  head(10)
+```
+
+### tabla exclusion intraanual
+
+#### Datos generales
+
+```{r}
+summary(exclusion_intraanual_2018_2021)
+```
+
+#### Promedio de exclusion por anio
+
+```{r}
+exclusion_intraanual_2018_2021 %>%
+  group_by(CURSO.LECTIVO) %>%
+  summarise(excl = mean(EXC4T + EXC5T, na.rm = TRUE)) %>%
+  ggplot(aes(CURSO.LECTIVO, excl)) +
+  geom_line() + geom_point()
+
+```
+
+#### Promedio de exclusion intraanual por anio
+
+```{r}
+exclusion_intraanual_2018_2021 %>%
+  group_by(CURSO.LECTIVO) %>%
+  summarise(excl = mean(EXC.INTRAT4 + EXC.INTRAT5, na.rm = TRUE)) %>%
+  ggplot(aes(CURSO.LECTIVO, excl)) +
+  geom_line() + geom_point()
+```
+
+#### Exclusion y exclusion intraanual por provincia
+
+```{r}
+exclusion_intraanual_2018_2021 %>%
+  group_by(PROVINCIA) %>%
+  summarise(exc = mean(EXC4T+ EXC5T, na.rm = TRUE)) %>%
+  arrange(desc(exc))
+
+exclusion_intraanual_2018_2021 %>%
+  group_by(PROVINCIA) %>%
+  summarise(exc = mean(EXC.INTRAT4+ EXC.INTRAT5, na.rm = TRUE)) %>%
+  arrange(desc(exc))
+```
+
+#### Colegios con mayor y menor exclusion y exclusion intraanual
+
+```{r}
+# exclusion
+# de menor a mayor
+exclusion_intraanual_2018_2021 %>% 
+  arrange(EXCT) %>% 
+  select(CURSO.LECTIVO, NOMBRE,PROVINCIA, EXC4T, EXC5T, EXCT) %>%
+  head(10)
+
+# de mayor a menor
+exclusion_intraanual_2018_2021 %>% 
+  arrange(desc(EXCT)) %>% 
+  select(CURSO.LECTIVO, NOMBRE,PROVINCIA, EXC4T, EXC5T, EXCT) %>%
+  head(10)
+
+#Exclusion intraanual
+
+# de menor a mayor
+exclusion_intraanual_2018_2021 %>% 
+  arrange(EXC.INTRAT) %>% 
+  select(CURSO.LECTIVO, NOMBRE,PROVINCIA, EXC.INTRAT4, EXC.INTRAT5, EXC.INTRAT) %>%
+  head(10)
+
+# de mayor a menor
+exclusion_intraanual_2018_2021 %>% 
+  arrange(desc(EXC.INTRAT)) %>% 
+  select(CURSO.LECTIVO, NOMBRE,PROVINCIA, EXC.INTRAT4, EXC.INTRAT5, EXC.INTRAT) %>%
+  head(10)
+```
+
+### Rendimiento previo a convocatoria y rendimiento definitivo
+
+```{r}
+aprobados_aplazados_reprobados_2018_2021 %>%
+  group_by(CURSO.LECTIVO) %>% 
+  summarise(tasa_aprobados = mean(tasa_aprobT))  
+
+rendimiento_definitivo_2018_2021 %>%
+  group_by(CURSO.LECTIVO) %>% 
+  summarise(tasa_aprobados = mean(tasa_aprobT))
+
+```
+
+### Matricula inicial anual y exclusion
+
+```{r}
+matricula_inicial_2018_2021 %>%
+  group_by(CURSO.LECTIVO) %>%
+  summarise(matricula = mean(MT))
+
+exclusion_intraanual_2018_2021 %>%
+  group_by(CURSO.LECTIVO) %>%
+  summarise(exclusion = mean(EXCT))
+
+exclusion_intraanual_2018_2021 %>%
+  group_by(CURSO.LECTIVO) %>%
+  summarise(exclusion_intraanual = mean(EXC.INTRAT))
+
+```
